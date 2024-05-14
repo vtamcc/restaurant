@@ -22,7 +22,8 @@ export default class Main extends cc.Component {
     @property(cc.Node)
     bangChuyenList: cc.Node = null;
 
-   
+    @property(cc.Node)
+    nodePerson: cc.Node = null;
     @property(cc.SpriteFrame)
     listFood: cc.SpriteFrame [] = [];
 
@@ -34,6 +35,7 @@ export default class Main extends cc.Component {
     ranDomFoods: any;
     listItemShop = [];
     // LIFE-CYCLE CALLBACKS:
+    speed = 50;
     onLoad () {
         Main.instance = this;
         this.ranDomFoods = this.getRandomFood();
@@ -41,6 +43,7 @@ export default class Main extends cc.Component {
         this.renderFood();
         // this.ranDomFood();
         this.itemFood();
+        
     }
 
     itemFood() {
@@ -50,7 +53,7 @@ export default class Main extends cc.Component {
             this.bangChuyenList.addChild(itembangChuyen.node);
             this.listItemShop.push(itembangChuyen);
         }
-        console.log(this.listItemShop);
+       
     }
 
     shuffle(array: any[]) {
@@ -78,9 +81,16 @@ export default class Main extends cc.Component {
             this.nodeItem.addChild(itemFood.node);
         }
     }
+
+   
     start () {
 
     }
 
-    // update (dt) {}
+     update (dt) {
+        this.nodePerson.x -= this.speed * dt;
+        if (this.nodePerson.x < this.node.parent.width) {
+            this.nodePerson.x = -this.node.width;
+        }
+     }
 }

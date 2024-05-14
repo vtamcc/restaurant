@@ -21,9 +21,8 @@ export default class Food extends cc.Component {
     // listFood: cc.SpriteFrame [] = [];
 
     id: number = 0;
-   
     // LIFE-CYCLE CALLBACKS:
-
+    count = 3;
     onLoad () {
         
     }
@@ -41,16 +40,22 @@ export default class Food extends cc.Component {
             // Main.instance.bangChuyenItem[i]
             Main.instance.listItemShop[Main.instance.indexItemBangChuyen].nodeActiveTrue.active = true;
             console.log("Dung")
+            this.count--;
+            console.log("Count ", this.count);
+            
         }
+        
        else {
         Main.instance.listItemShop[Main.instance.indexItemBangChuyen].nodeActiveFalse.active = true;
             console.log("Sai");
        }
+       
        Main.instance.indexItemBangChuyen++;
        console.log("Click item ", this.id);
        console.log("Phan tu thu ",Main.instance.indexItemBangChuyen);
-        
     }
+
+    
 
 
     
