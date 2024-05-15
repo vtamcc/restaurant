@@ -1,37 +1,43 @@
-// Learn TypeScript:
-//  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
-
+import Food from "./Food";
 import Main from "./Main";
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class BangChuyen extends cc.Component {
 
-    public static instance : BangChuyen = null
-    @property(cc.Node)
-    nodeActiveTrue: cc.Node = null;
+    @property
+    idBangChuyen: number = 0;
 
-    @property(cc.Sprite)
-    spfFood: cc.Sprite = null;
-    @property(cc.Node)
-    nodeActiveFalse: cc.Node = null;
+    @property(sp.Skeleton)
+    char: sp.Skeleton = null
 
-    // LIFE-CYCLE CALLBACKS:
+    @property(Food)
+    itemFood: Food[] = []
 
-    onLoad () {
-        BangChuyen.instance = this;
-    }
-
-    start () {
+    onLoad() {
 
     }
-    setSpfFood(id) {
-        this.spfFood.spriteFrame = Main.instance.listFood[Main.instance.ranDomFoods[id]];
+
+    update(dt: number) {
+        if (!Main.instance.isMove)
+            return
+
+        if (this.node.x <= -720) {
+            this.resetPos()
+        }
+
+        if (this.idBangChuyen == Main.instance.indexData) {
+            if (this.node.x <= 0) {
+                if (Main.instance.isMove)
+                    Main.instance.isMove = false
+            }
+        }
+
+        this.node.x -= 5;
     }
-    // update (dt) {}
+
+    resetPos() {
+        this.node.x = 1440
+    }
 }

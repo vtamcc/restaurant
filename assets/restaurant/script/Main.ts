@@ -8,52 +8,65 @@
 import BangChuyen from "./BangChuyen";
 import Food from "./Food";
 
-const {ccclass, property} = cc._decorator;
+export interface foodData {
+    id: number,
+    gold: number,
+    isWin: boolean,
+}
+const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Main extends cc.Component {
     public static instance: Main = null;
+    @property(cc.Label)
+    lbGold: cc.Label = null;
     @property(cc.Prefab)
     prfFood: cc.Prefab = null;
 
     @property(cc.Node)
-    nodeItem: cc.Node = null;
+    listBangChuyen: cc.Node[] = [];
 
-    @property(cc.Node)
-    bangChuyenList: cc.Node = null;
-
-    @property(cc.Node)
-    nodePerson: cc.Node = null;
     @property(cc.SpriteFrame)
-    listFood: cc.SpriteFrame [] = [];
+    listFood: cc.SpriteFrame[] = [];
 
-    @property(cc.Prefab)
-    prfBangchuyenItem: cc.Prefab = null
-    arrSpf = [0,1,2,3,4,5,6,7,8,9,10,11]
+    arrSpf = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     uniqueArr = []
     indexItemBangChuyen = 0;
+    countCorrect = 0;
     ranDomFoods: any;
     listItemShop = [];
-    // LIFE-CYCLE CALLBACKS:
     speed = 50;
-    onLoad () {
+    gold = 0;
+    // LIFE-CYCLE CALLBACKS:
+    data: Array<foodData> = [
+        { id: 1, gold: 50, isWin: false },
+        { id: 2, gold: 55, isWin: false },
+        { id: 3, gold: 125, isWin: false },
+    ]
+
+    isMove = false
+    indexData = 0;
+
+    onLoad() {
         Main.instance = this;
         this.ranDomFoods = this.getRandomFood();
         console.log(this.ranDomFoods);
-        this.renderFood();
+        // this.renderFood();
         // this.ranDomFood();
-        this.itemFood();
-        
+        // this.itemFood();
+        // this.movePerson();
+        this.resetBangChuyen();
+
     }
 
     itemFood() {
-        for(let i = 0; i < 3; i++) {
-            let itembangChuyen = cc.instantiate(this.prfBangchuyenItem).getComponent(BangChuyen);
-            itembangChuyen.setSpfFood(i);
-            this.bangChuyenList.addChild(itembangChuyen.node);
-            this.listItemShop.push(itembangChuyen);
-        }
-       
+        // for (let i = 0; i < 3; i++) {
+        //     let itembangChuyen = cc.instantiate(this.prfBangchuyenItem).getComponent(BangChuyen);
+        //     itembangChuyen.setSpfFood(i);
+        //     this.bangChuyenList.addChild(itembangChuyen.node);
+        //     this.listItemShop.push(itembangChuyen);
+        // }
+
     }
 
     shuffle(array: any[]) {
@@ -65,32 +78,40 @@ export default class Main extends cc.Component {
 
 
     getRandomFood() {
-        if (this.listFood.length < 3) {
-            console.error("Not enough elements in the list to pick 3 unique items.");
-            return;
-        }
         this.shuffle(this.arrSpf);
         return this.arrSpf.slice(0, 3);
     }
 
 
-    renderFood() {
-        for(let i = 0; i < 12; i++) {
-            let itemFood  = cc.instantiate(this.prfFood).getComponent(Food);
-            itemFood.setId(i);
-            this.nodeItem.addChild(itemFood.node);
-        }
+    // checkYouWin() {
+    //     if (this.count == 3) {
+    //         console.log("You Win");
+    //     } else {
+    //         console.log("You lost")
+    //     }
+    // }
+
+    start() {
+
     }
 
-   
-    start () {
 
-    }
+    resetBangChuyen() {
+        this.isMove = true;
+        this.indexItemBangChuyen = 0;
 
-     update (dt) {
-        this.nodePerson.x -= this.speed * dt;
-        if (this.nodePerson.x < this.node.parent.width) {
-            this.nodePerson.x = -this.node.width;
+        // 1 doi nguoi
+
+        // 2 doi mon an
+        let arrFood = this.getRandomFood();
+        this.indexData++;
+        if (this.indexData > 2)
+            this.indexData = 0;
+
+        let dt = this.listBangChuyen[this.indexData].getComponent(BangChuyen)
+        for (let i = 0; i < dt.itemFood.length; i++) { 
+            let item = dt.itemFood[i].getComponent(Food);
+            item.setId(arrFood[i]);
         }
-     }
+    }
 }

@@ -1,3 +1,7 @@
 {
-  "start-scene": "1987e0e3-5c1a-4c74-8254-e934df34e57c"
+  "start-scene": "1987e0e3-5c1a-4c74-8254-e934df34e57c",
+  "migrate-history": [
+    "cloud-function"
+  ],
+  "last-module-event-record-time": 1715759639873
 }
