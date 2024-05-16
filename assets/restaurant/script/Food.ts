@@ -6,6 +6,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 
+import BangChuyen from "./BangChuyen";
 import Main from "./Main";
 
 const { ccclass, property } = cc._decorator;
@@ -32,39 +33,22 @@ export default class Food extends cc.Component {
     setId(id: number) {
         this.id = id;
         this.spfFood.spriteFrame = Main.instance.listFood[id];
-        // console.log(id)
+        this.nDung.active = false;
+        this.nSai.active = false;
     }
 
-
     onClick() {
-        if (this.id === Main.instance.ranDomFoods[Main.instance.indexItemBangChuyen]) {
-            Main.instance.countCorrect++;
-            Main.instance.gold += 50;
+        Main.instance.checkCorrect(this.id);
 
-            Main.instance.listItemShop[Main.instance.indexItemBangChuyen].nodeActiveTrue.active = true;
-            Main.instance.lbGold.string = Main.instance.gold + " ";
-            console.log("Dung")
-        }
-        else {
-            Main.instance.listItemShop[Main.instance.indexItemBangChuyen].nodeActiveFalse.active = true;
-            console.log("Sai");
-        }
+        // console.log(this.id)
+        // if(this.id == Main.instance.ranDomFoods[Main.instance.indexItemBangChuyen]) {
+        //     console.log("true");
+        // }else {
+        //     console.log("False")
+        // }
 
-        Main.instance.indexItemBangChuyen++;
-        Main.instance.checkYouWin();
-        console.log("Click item ", this.id);
-        console.log("Phan tu thu ", Main.instance.indexItemBangChuyen);
+        // Main.instance.indexItemBangChuyen++;
 
-        if (Main.instance.indexItemBangChuyen == 3) {
-            if (Main.instance.countCorrect < 3) {
-                console.log("thua cmnr");
-            }
-            else
-            {
-                Main.instance.resetBangChuyen()
-                console.log("di tiep");
-            }
-        }
     }
 
     checkYouWin() {

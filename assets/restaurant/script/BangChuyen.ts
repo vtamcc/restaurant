@@ -30,7 +30,8 @@ export default class BangChuyen extends cc.Component {
         if (this.idBangChuyen == Main.instance.indexData) {
             if (this.node.x <= 0) {
                 if (Main.instance.isMove)
-                    Main.instance.isMove = false
+                    Main.instance.isMove = false;
+                    this.char.addAnimation(0,"idle",true);
             }
         }
 

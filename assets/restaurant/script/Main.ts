@@ -8,11 +8,6 @@
 import BangChuyen from "./BangChuyen";
 import Food from "./Food";
 
-export interface foodData {
-    id: number,
-    gold: number,
-    isWin: boolean,
-}
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -29,33 +24,38 @@ export default class Main extends cc.Component {
     @property(cc.SpriteFrame)
     listFood: cc.SpriteFrame[] = [];
 
+    @property(cc.Node)
+    nodeListItem: cc.Node = null;
+    @property(cc.Label)
+    lbNumberPlayer: cc.Label = null;
+
+    @property(cc.ProgressBar)
+    prgBar: cc.ProgressBar = null;
+    quantityPlayer = 3;
     arrSpf = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     uniqueArr = []
     indexItemBangChuyen = 0;
     countCorrect = 0;
     ranDomFoods: any;
     listItemShop = [];
+    arrFood;
     speed = 50;
     gold = 0;
     // LIFE-CYCLE CALLBACKS:
-    data: Array<foodData> = [
-        { id: 1, gold: 50, isWin: false },
-        { id: 2, gold: 55, isWin: false },
-        { id: 3, gold: 125, isWin: false },
-    ]
-
+  
     isMove = false
-    indexData = 0;
+    indexData = -1;
 
     onLoad() {
         Main.instance = this;
-        this.ranDomFoods = this.getRandomFood();
-        console.log(this.ranDomFoods);
-        // this.renderFood();
+        this.renderFood();
         // this.ranDomFood();
         // this.itemFood();
         // this.movePerson();
+        
         this.resetBangChuyen();
+        console.log(this.arrFood);
+        // this.checkReset();
 
     }
 
@@ -82,7 +82,14 @@ export default class Main extends cc.Component {
         return this.arrSpf.slice(0, 3);
     }
 
+    renderFood() {
+        for (let i = 0; i < 12; i++) {
+            let itemFood = cc.instantiate(this.prfFood).getComponent(Food);
+            itemFood.setId(i)
+            this.nodeListItem.addChild(itemFood.node);
 
+        }
+    }
     // checkYouWin() {
     //     if (this.count == 3) {
     //         console.log("You Win");
@@ -91,27 +98,115 @@ export default class Main extends cc.Component {
     //     }
     // }
 
-    start() {
-
+    actionChar() {
+        let dt = this.listBangChuyen[this.indexData].getComponent(BangChuyen)
+        if (this.countCorrect < 2)
+            dt.char.setAnimation(0, "discomfort", true);
+        else {
+            dt.char.setAnimation(0, "happy", true);
+            this.scheduleOnce( () => {
+                dt.char.setAnimation(0,"happy_out",true);
+            },1)
+           
+        }
+            
     }
 
+
+    checkCorrect(idFood) {
+        // if (idFood === this.arrFood[this.indexItemBangChuyen]) {
+        //     console.log(this.arrFood[this.indexItemBangChuyen]);
+        //     this.countCorrectIsTrue++;
+        //     this.gold += 50;
+        //     this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[this.indexItemBangChuyen].nDung.active = true;
+        //     Main.instance.lbGold.string = Main.instance.gold + " ";
+        //     console.log("Dung")
+        // }
+        // else {
+        //     this.countCorrectIsFalse++;
+        //     console.log("Count sai ", this.countCorrectIsFalse);
+        //     this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[this.indexItemBangChuyen].nSai.active = true;
+        //     console.log("Sai");
+        // }
+
+        
+        // console.log("index=== ", Main.instance.indexItemBangChuyen);
+        // if (this.indexItemBangChuyen == 3) {
+        //     this.actionChar()
+        //     if (this.countCorrectIsFalse >= 2) {
+        //         console.log("thua cmnr"); // show popup
+        //     }
+        //     else if(this.countCorrectIsTrue >= 3) {
+        //         this.prgBar.progress += 0.35;
+        //         this.quantityPlayer--;
+        //         this.lbGold.string = 0 + " ";
+        //         this.gold += 0;
+        //         console.log("di tiep");
+        //         this.scheduleOnce(() => {
+        //             this.resetBangChuyen()
+        //         },0.7)
+                
+        //     }
+        // }
+        
+        
+        // if (this.quantityPlayer <= 0) {
+        //     console.log("You win");
+        //     return;
+        // }
+        console.log("id = ", idFood);
+        let test = this.arrFood.indexOf(idFood);
+        console.log("test ", test);
+        if(test > -1) {
+            this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[test].nDung.active = true;
+            this.countCorrect++;
+        }else {
+            this.actionChar();
+            console.log("Thua")
+            for(let i = 0; i < this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood.length; i++) {
+                console.log(this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[i]);
+            }
+        }
+
+        if(this.countCorrect == 3) {
+            this.actionChar()
+            this.prgBar.progress += 0.35;
+            this.quantityPlayer--;
+            this.lbGold.string = 0 + " ";
+            this.gold += 0;
+            console.log("di tiep");
+            this.scheduleOnce(() => {
+                this.resetBangChuyen()
+            },0.7)
+        }
+
+        this.lbNumberPlayer.string = Main.instance.quantityPlayer + '';
+        // if(this.arrFood.includes(idFood)) {
+        //     // this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[idFood].nDung.active = true;
+        // }else {
+        //     // this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[idFood].nSai.active = true;
+        // }
+       
+    }
 
     resetBangChuyen() {
         this.isMove = true;
         this.indexItemBangChuyen = 0;
-
         // 1 doi nguoi
-
+    
         // 2 doi mon an
-        let arrFood = this.getRandomFood();
         this.indexData++;
+        this.gold = 0;
+        this.countCorrect = 0;
+        console.log("index data ", this.indexData);
+        this.arrFood = this.getRandomFood();
+
         if (this.indexData > 2)
             this.indexData = 0;
-
         let dt = this.listBangChuyen[this.indexData].getComponent(BangChuyen)
-        for (let i = 0; i < dt.itemFood.length; i++) { 
+        for (let i = 0; i < dt.itemFood.length; i++) {
             let item = dt.itemFood[i].getComponent(Food);
-            item.setId(arrFood[i]);
+            item.setId(this.arrFood[i]);
         }
     }
 }
