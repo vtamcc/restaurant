@@ -159,6 +159,8 @@ export default class Main extends cc.Component {
         console.log("test ", test);
         if(test > -1) {
             this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[test].nDung.active = true;
+
+            
             this.countCorrect++;
         }else {
             this.actionChar();
