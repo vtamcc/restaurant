@@ -33,6 +33,11 @@ export default class BangChuyen extends cc.Component {
                     Main.instance.isMove = false;
                     this.char.addAnimation(0,"idle",true);
             }
+
+            if(Main.instance.quantityPlayer <= 0) {
+                Main.instance.isMove = false
+            }
+            
         }
 
         this.node.x -= 5;

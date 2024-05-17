@@ -7,6 +7,7 @@
 
 import BangChuyen from "./BangChuyen";
 import Food from "./Food";
+import Win from "./Win";
 
 const { ccclass, property } = cc._decorator;
 
@@ -31,6 +32,20 @@ export default class Main extends cc.Component {
 
     @property(cc.ProgressBar)
     prgBar: cc.ProgressBar = null;
+
+    @property(cc.Label)
+    lbCountdown: cc.Label = null;
+
+    @property(cc.Prefab)
+    prfWin: cc.Prefab = null;
+
+    @property(cc.Prefab)
+    prfLost: cc.Prefab = null;
+
+    @property(cc.Node)
+    nodeHand: cc.Node = null;
+    numberCountdown = 20;
+    countdownInterval: any = null;
     quantityPlayer = 3;
     arrSpf = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     uniqueArr = []
@@ -41,34 +56,39 @@ export default class Main extends cc.Component {
     arrFood;
     speed = 50;
     gold = 0;
+    scaleDuration = 0.4;
+    minScale = 0.5;
+    maxScale = 0.7;
+    private resizeAction: cc.Action = null;
+
+
     // LIFE-CYCLE CALLBACKS:
-  
+    
+
     isMove = false
     indexData = -1;
-
+    isOpen = false
+    isWin = false;
     onLoad() {
         Main.instance = this;
         this.renderFood();
         // this.ranDomFood();
         // this.itemFood();
         // this.movePerson();
-        
         this.resetBangChuyen();
         console.log(this.arrFood);
         // this.checkReset();
-
+        this.startCountDown();
+        this.scaleHand();
     }
 
-    itemFood() {
-        // for (let i = 0; i < 3; i++) {
-        //     let itembangChuyen = cc.instantiate(this.prfBangchuyenItem).getComponent(BangChuyen);
-        //     itembangChuyen.setSpfFood(i);
-        //     this.bangChuyenList.addChild(itembangChuyen.node);
-        //     this.listItemShop.push(itembangChuyen);
-        // }
 
+    scaleHand() {
+       let scaleUp = cc.scaleTo(this.scaleDuration,this.minScale);
+       let scaleDown = cc.scaleTo(this.scaleDuration,this.maxScale);
+       this.resizeAction = cc.repeatForever(cc.sequence(scaleUp, scaleDown));
+       this.nodeHand.runAction(this.resizeAction);
     }
-
     shuffle(array: any[]) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -90,13 +110,19 @@ export default class Main extends cc.Component {
 
         }
     }
-    // checkYouWin() {
-    //     if (this.count == 3) {
-    //         console.log("You Win");
-    //     } else {
-    //         console.log("You lost")
-    //     }
-    // }
+   effectWin() {
+        let pfrYouWin = cc.instantiate(this.prfWin).getComponent(Win)
+        //pfrYouWin.rotateItem();
+        this.node.addChild(pfrYouWin.node);
+
+   }
+
+   effectLost() {
+        let pfrYouLost = cc.instantiate(this.prfLost)
+        //pfrYouWin.rotateItem();
+        this.node.addChild(pfrYouLost);
+
+    }
 
     actionChar() {
         let dt = this.listBangChuyen[this.indexData].getComponent(BangChuyen)
@@ -112,6 +138,32 @@ export default class Main extends cc.Component {
             
     }
 
+    startCountDown() {
+        this.updateCountDown();
+        this.countdownInterval = setInterval(() => {
+            this.numberCountdown--;
+            this.updateCountDown();
+            if(this.numberCountdown <= 0 ) {
+                this.effectLost();
+                this.stopCountDown();
+                this.onCountDownEndGame();
+            }
+        },1000)
+    }
+
+    stopCountDown() {
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+        }
+    }
+
+    onCountDownEndGame() {
+        console.log("You Lost")
+    }
+    updateCountDown() {
+        this.lbCountdown.string = this.numberCountdown + " ";
+    }
 
     checkCorrect(idFood) {
         // if (idFood === this.arrFood[this.indexItemBangChuyen]) {
@@ -154,22 +206,35 @@ export default class Main extends cc.Component {
         //     console.log("You win");
         //     return;
         // }
+        this.nodeHand.destroy();
+
         console.log("id = ", idFood);
         let test = this.arrFood.indexOf(idFood);
         console.log("test ", test);
         if(test > -1) {
             this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[test].nDung.active = true;
-
+            this.gold += 50;
             
             this.countCorrect++;
         }else {
+            
+            
+            this.scheduleOnce(() => {
+                this.effectLost();
+            },1)
             this.actionChar();
             console.log("Thua")
+            this.stopCountDown();
             for(let i = 0; i < this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood.length; i++) {
-                console.log(this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[i]);
+                if(this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[i].nDung.active == true) return
+                else {
+                    this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[i].nSai.active = true;
+                }
+               
             }
         }
-
+        this.lbGold.string = this.gold + " ";
+        
         if(this.countCorrect == 3) {
             this.actionChar()
             this.prgBar.progress += 0.35;
@@ -182,7 +247,17 @@ export default class Main extends cc.Component {
             },0.7)
         }
 
+        if(this.quantityPlayer <= 0) {
+            this.actionChar();
+            this.scheduleOnce(() => {
+                this.effectWin();
+            },1)
+            this.stopCountDown();
+        }
+        
         this.lbNumberPlayer.string = Main.instance.quantityPlayer + '';
+
+        
         // if(this.arrFood.includes(idFood)) {
         //     // this.listBangChuyen[this.indexData].getComponent(BangChuyen).itemFood[idFood].nDung.active = true;
         // }else {
@@ -203,7 +278,7 @@ export default class Main extends cc.Component {
         console.log("index data ", this.indexData);
         this.arrFood = this.getRandomFood();
 
-        if (this.indexData > 2)
+        if (this.indexData >2)
             this.indexData = 0;
         let dt = this.listBangChuyen[this.indexData].getComponent(BangChuyen)
         for (let i = 0; i < dt.itemFood.length; i++) {
