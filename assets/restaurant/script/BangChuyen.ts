@@ -11,13 +11,13 @@ export default class BangChuyen extends cc.Component {
 
     @property(sp.Skeleton)
     char: sp.Skeleton = null
-
     @property(Food)
     itemFood: Food[] = []
 
     onLoad() {
 
     }
+
 
     update(dt: number) {
         if (!Main.instance.isMove)

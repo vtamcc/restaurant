@@ -17,12 +17,15 @@ export default class Food extends cc.Component {
     @property(cc.Sprite)
     spfFood: cc.Sprite = null;
 
+    
+    
     @property(cc.Node)
     nDung: cc.Node = null;
 
     @property(cc.Node)
     nSai: cc.Node = null;
 
+    @property
     id: number = 0;
 
     // LIFE-CYCLE CALLBACKS:

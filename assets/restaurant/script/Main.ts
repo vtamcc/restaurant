@@ -41,7 +41,6 @@ export default class Main extends cc.Component {
 
     @property(cc.Prefab)
     prfLost: cc.Prefab = null;
-
     @property(cc.Node)
     nodeHand: cc.Node = null;
     numberCountdown = 20;
@@ -52,7 +51,7 @@ export default class Main extends cc.Component {
     indexItemBangChuyen = 0;
     countCorrect = 0;
     ranDomFoods: any;
-    listItemShop = [];
+    listItemFood = [];
     arrFood;
     speed = 50;
     gold = 0;
@@ -61,23 +60,24 @@ export default class Main extends cc.Component {
     maxScale = 0.7;
     private resizeAction: cc.Action = null;
 
-
+    
     // LIFE-CYCLE CALLBACKS:
     
-
+    
     isMove = false
     indexData = -1;
     isOpen = false
     isWin = false;
     onLoad() {
         Main.instance = this;
+        this.resetBangChuyen();
         this.renderFood();
         // this.ranDomFood();
         // this.itemFood();
         // this.movePerson();
-        this.resetBangChuyen();
         console.log(this.arrFood);
         // this.checkReset();
+        this.setPosHand();
         this.startCountDown();
         this.scaleHand();
     }
@@ -96,7 +96,7 @@ export default class Main extends cc.Component {
         }
     }
 
-
+    
     getRandomFood() {
         this.shuffle(this.arrSpf);
         return this.arrSpf.slice(0, 3);
@@ -104,10 +104,8 @@ export default class Main extends cc.Component {
 
     renderFood() {
         for (let i = 0; i < 12; i++) {
-            let itemFood = cc.instantiate(this.prfFood).getComponent(Food);
-            itemFood.setId(i)
-            this.nodeListItem.addChild(itemFood.node);
-
+            let itemFood = this.nodeListItem.children[i]
+            itemFood.getComponent(Food).setId(i);
         }
     }
    effectWin() {
@@ -117,6 +115,19 @@ export default class Main extends cc.Component {
 
    }
 
+   setPosHand() {
+        let indexFood = this.arrFood[0];
+        console.log("id ", indexFood);
+        for(let i = 0; i < 12; i++) {
+            if(indexFood == this.arrSpf[i]) {
+                console.log(true);
+                console.log(this.arrSpf[i]);
+                let pos = this.nodeListItem.children[this.arrSpf[i]].position;
+                this.nodeHand.setPosition(pos);
+                return;
+            }
+        }
+   }
    effectLost() {
         let pfrYouLost = cc.instantiate(this.prfLost)
         //pfrYouWin.rotateItem();
@@ -217,8 +228,6 @@ export default class Main extends cc.Component {
             
             this.countCorrect++;
         }else {
-            
-            
             this.scheduleOnce(() => {
                 this.effectLost();
             },1)
@@ -269,15 +278,18 @@ export default class Main extends cc.Component {
     resetBangChuyen() {
         this.isMove = true;
         this.indexItemBangChuyen = 0;
+        this.indexData++;
+        // for(let i = 0; i < arrChar.length; i++) {
+        //     let itemChar = dtChar.char[i]
+        //     console.log(itemChar);
+        // }
         // 1 doi nguoi
     
         // 2 doi mon an
-        this.indexData++;
         this.gold = 0;
         this.countCorrect = 0;
         console.log("index data ", this.indexData);
         this.arrFood = this.getRandomFood();
-
         if (this.indexData >2)
             this.indexData = 0;
         let dt = this.listBangChuyen[this.indexData].getComponent(BangChuyen)
