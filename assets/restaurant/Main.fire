@@ -14001,7 +14001,7 @@
     "node": {
       "__id__": 205
     },
-    "_enabled": false,
+    "_enabled": true,
     "_materials": [
       {
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
@@ -14516,41 +14516,6 @@
     "prfLost": {
       "__uuid__": "46fb5d5a-6eb8-45cd-b822-4c6444145bc6"
     },
-    "charArr": [
-      {
-        "__uuid__": "4a512d2e-1a6d-49bf-97c5-5e980347a732"
-      },
-      {
-        "__uuid__": "b9266152-9c8e-4ac4-9d3b-0f0b81e95e1f"
-      },
-      {
-        "__uuid__": "1f03eacf-3eab-48cf-a48f-2eae43f37768"
-      },
-      {
-        "__uuid__": "31fe2d29-b4e7-4f17-8cde-b4ddccfe587b"
-      },
-      {
-        "__uuid__": "782dd5a7-0001-4361-8784-309bdc737b3e"
-      },
-      {
-        "__uuid__": "0127445e-16ed-43a6-a028-23ded5f7d0a0"
-      },
-      {
-        "__uuid__": "5d2f0b4a-6043-40cf-95bd-1eb349f846b4"
-      },
-      {
-        "__uuid__": "2fa4583d-be7c-4340-92a9-04fb61b79ce3"
-      },
-      {
-        "__uuid__": "93e4435f-f445-44a1-9413-b680eaffb91c"
-      },
-      {
-        "__uuid__": "073d223b-4e57-4ff5-b426-5fa5d2840641"
-      },
-      {
-        "__uuid__": "9b2abef7-442e-4ff2-86a7-0d8776ddcfb1"
-      }
-    ],
     "nodeHand": {
       "__id__": 199
     },
